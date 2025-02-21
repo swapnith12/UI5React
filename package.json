@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "@langchain/anthropic": "^0.3.13",
+    "@langchain/core": "^0.3.40",
+    "openai": "^4.85.3"
+  }
+}

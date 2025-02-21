@@ -1,5 +1,6 @@
 {
   "name": "vite-ts",
+  "homepage": "http://swapnithUI5.github.io/UI5React",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -32,6 +33,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.0",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"
   }

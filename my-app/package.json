@@ -11,8 +11,8 @@
     "test:open": "cypress open --component --browser chrome",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "predeploy" : "npm run build",
-    "deploy" : "gh-pages -d build"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@langchain/anthropic": "^0.3.13",
@@ -21,6 +21,7 @@
     "@ui5/webcomponents-fiori": "~1.24.0",
     "@ui5/webcomponents-icons": "~1.24.0",
     "@ui5/webcomponents-react": "~1.29.0",
+    "openai": "^4.85.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

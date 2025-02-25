@@ -1,99 +1,55 @@
-import React, { useState } from 'react';
-import { OpenAI } from 'openai';
+import React, { useState, useEffect } from 'react';
+import { Table, TableColumn, TableRow, TableCell, Input, Button } from "@ui5/webcomponents-react";
 
-const apiKey = import.meta.env.VITE_OPEN_API_KEY;
-const api = new OpenAI({
-  apiKey: apiKey,
-  dangerouslyAllowBrowser: true 
-});
+const ODATA_URL = "https://services.odata.org/v3/northwind/northwind.svc/Customers?$format=json";
 
-const products = [
-  {
-    id: 101,
-    name: 'Smartphone',
-    price: 499.99,
-    brand: 'TechCorp',
-    stock: 120,
-    specs: { screenSize: '6.1"', storage: '128GB' },
-    reviews: [{ userId: 1, rating: 4.5 }]
-  },
-  {
-    id: 102,
-    name: 'Tablet',
-    price: 299.99,
-    brand: 'TabX',
-    stock: 85,
-    specs: { screenSize: '10.2"', storage: '64GB' },
-    reviews: [{ userId: 2, rating: 3.8 }]
-  },
-  {
-    id: 103,
-    name: 'Wireless Headphones',
-    price: 89.99,
-    brand: 'AudioPro',
-    stock: 200,
-    specs: { connectivity: 'Bluetooth', batteryLife: '20h' },
-    reviews: [{ userId: 3, rating: 4.8 }]
-  }
-];
-
+interface Customer {
+    CustomerID:String;
+    CompanyName:String;
+    ContactName :String;
+    City : String;
+}
 
 const App = () => {
-  const [question, setQuestion] = useState<string>('');
-  const [answer, setAnswer] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const queryProductPrice = async (question: string) => {
-    setLoading(true);
-    try {
-      const messages = await api.chat.completions.create({
-        model: 'gpt-4o-mini', 
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an AI assistant that knows everything about products.',
-          },
-          {
-            role: 'user',
-            content: `Here are some products: ${JSON.stringify(products)}. ${question}`
-          }
-        ],
-      });
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch(ODATA_URL);
+        const data = await response.json();
+        setCustomers(data.value);
+      } catch (error) {
+        console.error("Error fetching OData:", error);
+      }
+      setLoading(false);
+    };
 
-      const message = messages.choices[0].message.content;
-      console.log(`Assistant: ${message}`); 
-      setAnswer(`${message}`);
-
-    } catch (error) {
-      console.error("Error querying OpenAI API:", error);
-      setAnswer("Sorry, I couldn't process your request.");
-    }
-    setLoading(false);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuestion(event.target.value);
-  };
-
-  const handleAskQuestion = () => {
-    queryProductPrice(question);
-  };
+    fetchCustomers();
+  }, []);
 
   return (
-    <div>
-      <h1>Product Information</h1>
-      <p>Ask a question about the product data (e.g., "What is the price of smartphone")</p>
-      <input
-        type="text"
-        value={question}
-        onChange={handleInputChange}
-        placeholder="Ask a question"
-        style={{width:"300px"}}
-      />
-      <button onClick={handleAskQuestion} disabled={loading}>
-        {loading ? "Loading..." : "Get Answer"}
-      </button>
-      <p><strong>Answer:</strong> {answer}</p>
+    <div style={{ padding: '20px' }}>
+      <h1>Customer Information</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <Table style={{ marginTop: "20px" }}>
+          <TableColumn>Customer ID</TableColumn>
+          <TableColumn>Company Name</TableColumn>
+          <TableColumn>Contact Name</TableColumn>
+          <TableColumn>City</TableColumn>
+          {customers.map((customer, index) => (
+            <TableRow key={index}>
+              <TableCell>{customer.CustomerID}</TableCell>
+              <TableCell>{customer.CompanyName}</TableCell>
+              <TableCell>{customer.ContactName}</TableCell>
+              <TableCell>{customer.City}</TableCell>
+            </TableRow>
+          ))}
+        </Table>
+      )}
     </div>
   );
 };
